@@ -1,26 +1,22 @@
----
 name: Logstash Syntax
 on:
   push:
     tags:
       - v*
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-
+    branches: [ main ]
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     strategy:
       max-parallel: 4
       matrix:
         logstashversion: [6, 7]
-
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -30,7 +26,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install logstash
           mkdir -p /tmp/logstash/data /tmp/logstash/logs
-
       - name: Test with Logstash
         run: |
           /usr/share/logstash/bin/logstash  --path.settings /etc/logstash/ --path.config '*conf' --path.data /tmp/logstash/data --path.logs /tmp/logstash/logs --config.test_and_exit
